@@ -70,4 +70,4 @@ src/
 AnouPro
 GitHub: @AnouGeek
 
-Goal: Becoming a proficient React Developer (Next.js & TypeScript focus).![Uploading image.png…]()
+Goal: Becoming a proficient React Developer (Next.js & TypeScript focus).![Aperçu du projet](./screenshot.png)
