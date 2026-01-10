@@ -17,7 +17,7 @@ function App() {
 
   const [error, setError] = useState("");
 
-  
+  const [darkMode, setDarkMode] = useState(true)
 
   function deleteTodo(id) {
     setTodoList(todoList.filter((todo) => todo.id !== id));
