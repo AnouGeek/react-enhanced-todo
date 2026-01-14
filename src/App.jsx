@@ -1,34 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 import ListItem from "./components/ListItem";
 
 function App() {
-  const [todoList, setTodoList] = useState([
-    {
-      id: nanoid(8),
-      content: "Add an edit icon for updating a task",
-      completed: false,
-    },
-    { id: nanoid(8), content: "Add dark mode", completed: true },
-    { id: nanoid(8), content: "Add task validation", completed: true },
-    {
-      id: nanoid(8),
-      content: "Challenge 2 – LocalStorage: keep data after refresh",
-      completed: false,
-    },
-    {
-      id: nanoid(8),
-      content: "Challenge 5 – Filters: display only what we want",
-      completed: false,
-    },
-    { id: nanoid(8), content: "Anti-doublon", completed: false },
-  ]);
+
+  // Au lieu de donner la liste directement, on donne une fonction
+  const [todoList, setTodoList] = useState(() => {
+    // 1. On essaie de récupérer la sauvegarde dans le navigateur
+    const savedList = localStorage.getItem("react-enhanced-todo");
+
+    // 2. Si on trouve une sauvegarde (si savedList n'est pas null)
+    if (savedList) {
+      // On la transforme en tableau et on l'utilise
+      return JSON.parse(savedList);
+    }
+
+    // 3. Sinon (si c'est la première visite), on prend la liste par défaut
+    return [
+      { id: nanoid(8), content: "Item 1", completed: false },
+      { id: nanoid(8), content: "Item 2", completed: false },
+      { id: nanoid(8), content: "Item 3", completed: false },
+    ];
+  });
 
   const [task, setTask] = useState("");
 
   const [error, setError] = useState("");
 
   const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const listString = JSON.stringify(todoList)
+    localStorage.setItem("react-enhanced-todo", listString)
+  }, [todoList]);
 
   function deleteTodo(id) {
     setTodoList(todoList.filter((todo) => todo.id !== id));
@@ -54,7 +58,7 @@ function App() {
       { id: nanoid(8), content: trimmed, completed: false },
     ]);
     setTask("");
-    setError(false);
+    setError("");
   }
 
   function toggleTodo(id) {
@@ -97,7 +101,7 @@ function App() {
           </button>
         </div>
         <h1
-          className={`text-4xl mb-10 text-center font-roboto tracking-tight ${
+          className={`text-4xl mb-20 text-center font-roboto tracking-tight ${
             darkMode
               ? "text-slate-100 font-semibold"
               : "text-slate-900 font-extrabold"
@@ -106,11 +110,11 @@ function App() {
           📅 My todo-list
         </h1>
 
-        <form onSubmit={handleSubmit} className="mb-10">
+        <form onSubmit={handleSubmit} className="mb-20">
           <label
             htmlFor="todo-item"
-            className={`font-poppins text-xl ml-3
-            ${darkMode ? "text-amber-500" : "text-orange-500 font-semibold"}
+            className={`block font-poppins text-xl ml-3 mb-5
+            ${darkMode ? "text-indigo-600" : "text-indigo-600 font-bold"}
               `}
           >
             Add task
@@ -119,20 +123,23 @@ function App() {
           <div className="relative mt-3">
             <input
               value={task}
-              onChange={(e) => setTask(e.target.value)}
+              onChange={(e) => {
+                setTask(e.target.value);
+                if (error) setError("");
+              }}
               type="text"
               placeholder="New Task..."
-              className={`block w-full rounded-full py-3 px-6 pr-24 focus:outline-none text-slate-800 
+              className={`block w-full rounded-full py-3 px-6 pr-24 mb-10 focus:outline-none text-slate-800 
               ${
                 darkMode
                   ? "bg-slate-50 placeholder:text-slate-400 placeholder:font-light"
-                  : "bg-slate-100 text-slate-900 placeholder:text-slate-400 border border-amber-200"
+                  : "bg-slate-100 text-slate-900 placeholder:text-slate-400 border border-indigo-300 focus:border-indigo-500"
               }
                 `}
             />
 
             <button
-              className={`absolute right-2 top-1/2 -translate-y-1/2 bg-amber-500 hover:bg-amber-600 text-slate-200 px-4 py-1.5 rounded-full font-bold transition-colors active:scale-95 cursor-pointer`}
+              className={`absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-500 hover:bg-indigo-600 text-slate-200 px-4 py-1.5 rounded-full font-bold transition-colors active:scale-95 cursor-pointer`}
             >
               Add
             </button>
@@ -140,7 +147,7 @@ function App() {
 
           {error && (
             <p
-              className={` ml-3 mt-3 ${
+              className={` ml-3 mt-3 text-center ${
                 darkMode ? "text-red-500" : "text-red-600 font-semibold"
               }`}
             >
@@ -152,7 +159,7 @@ function App() {
         <ul className="flex flex-col gap-4">
           {todoList.length === 0 && (
             <p
-              className={` font-inter italic text-xl ml-3
+              className={` font-inter italic text-xl ml-3 text-center
             ${darkMode ? "text-slate-100/50" : "text-slate-500"}
             `}
             >

@@ -44,7 +44,10 @@ export default function ListItem({
       </div>
 
       <button
-        onClick={() => deleteTodo(itemData.id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          deleteTodo(itemData.id);
+        }}
         className={`  transition-colors opacity-0 group-hover:opacity-100 px-3 py-1 font-mono text-sm cursor-pointer ${
           darkMode
             ? "text-slate-200 hover:text-red-400"
