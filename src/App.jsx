@@ -53,6 +53,18 @@ function App() {
       return;
     }
 
+    // 1. On vérifie si la tâche existe déjà
+    // On compare les textes en minuscules pour que "Pomme" et "pomme" soient pareils
+    const isDuplicate = todoList.some(item => 
+      item.content.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    // 2. Si c'est un doublon, on arrête tout
+    if (isDuplicate) {
+      setError("Task already exists!"); // Affiche le message
+      return; // On sort de la fonction, on n'ajoute rien
+    }
+
     setTodoList([
       ...todoList,
       { id: nanoid(8), content: trimmed, completed: false },
