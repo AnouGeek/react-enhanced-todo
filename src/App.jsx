@@ -4,18 +4,18 @@ import ListItem from "./components/ListItem";
 
 function App() {
 
-  // Au lieu de donner la liste directement, on donne une fonction
+  // Instead of providing the list directly, we provide a function
   const [todoList, setTodoList] = useState(() => {
-    // 1. On essaie de récupérer la sauvegarde dans le navigateur
+    // 1. Try to retrieve the saved data from the browser
     const savedList = localStorage.getItem("react-enhanced-todo");
 
-    // 2. Si on trouve une sauvegarde (si savedList n'est pas null)
+    // 2. If a save is found (if savedList is not null)
     if (savedList) {
-      // On la transforme en tableau et on l'utilise
+      // Parse it into an array and use it
       return JSON.parse(savedList);
     }
 
-    // 3. Sinon (si c'est la première visite), on prend la liste par défaut
+    // 3. Otherwise (if it's the first visit), take the default list
     return [
       { id: nanoid(8), content: "Item 1", completed: false },
       { id: nanoid(8), content: "Item 2", completed: false },
@@ -28,6 +28,8 @@ function App() {
   const [error, setError] = useState("");
 
   const [darkMode, setDarkMode] = useState(false);
+
+  const [filter, setFilter] = useState("all")
 
   useEffect(() => {
     const listString = JSON.stringify(todoList)
@@ -53,16 +55,16 @@ function App() {
       return;
     }
 
-    // 1. On vérifie si la tâche existe déjà
-    // On compare les textes en minuscules pour que "Pomme" et "pomme" soient pareils
+    // 1. Check if the task already exists
+    // Compare texts in lowercase so that "Apple" and "apple" are the same
     const isDuplicate = todoList.some(item => 
       item.content.toLowerCase() === trimmed.toLowerCase()
     );
 
-    // 2. Si c'est un doublon, on arrête tout
+    // 2. If it is a duplicate, stop everything
     if (isDuplicate) {
-      setError("Task already exists!"); // Affiche le message
-      return; // On sort de la fonction, on n'ajoute rien
+      setError("Task already exists!"); // Display the message
+      return; // Exit the function, do not add anything
     }
 
     setTodoList([
@@ -80,6 +82,19 @@ function App() {
       )
     );
   }
+
+  // 🔭 DERIVED STATE (État dérivé)
+  // We don't touch the original todoList.
+  // We create a new list just for display purposes based on the filter.
+  const filteredTodoList = todoList.filter((item) => {
+    if (filter === "todo") {
+      return !item.completed; // Keep only unchecked items
+    }
+    if (filter === "completed") {
+      return item.completed; // Keep only checked items
+    }
+    return true; // If filter is "all", keep everything
+  });
 
   return (
     <div
@@ -168,6 +183,42 @@ function App() {
           )}
         </form>
 
+        <div className="flex justify-center gap-4 mb-10">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-4 py-1 rounded-full text-lg font-semibold transition-colors 
+              ${filter === "all" 
+                ? "bg-indigo-600 text-white" // Active style
+                : "bg-slate-200 text-slate-700 hover:bg-slate-300" // Inactive style
+              }`}
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => setFilter("todo")}
+            className={`px-4 py-1 rounded-full text-lg font-semibold transition-colors 
+              ${filter === "todo" 
+                ? "bg-indigo-600 text-white" 
+                : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+              }`}
+          >
+            To do
+          </button>
+
+          <button
+            onClick={() => setFilter("completed")}
+            className={`px-4 py-1 rounded-full text-lg font-semibold transition-colors 
+              ${filter === "completed" 
+                ? "bg-indigo-600 text-white" 
+                : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+              }`}
+          >
+            Completed
+          </button>
+        </div>
+        {/* 👆 END OF FILTERS 👆 */}
+
         <ul className="flex flex-col gap-4">
           {todoList.length === 0 && (
             <p
@@ -179,7 +230,7 @@ function App() {
             </p>
           )}
           {todoList.length > 0 &&
-            todoList.map((item) => (
+            filteredTodoList.map((item) => (
               <ListItem
                 key={item.id}
                 itemData={item}
