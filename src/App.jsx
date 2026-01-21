@@ -83,6 +83,17 @@ function App() {
     );
   }
 
+  // 🧠 UPDATE FUNCTION
+  // Updates the content of a specific task
+  function updateTodo(id, newContent) {
+    setTodoList((prevList) =>
+      prevList.map((todo) =>
+        // If ID matches, we create a copy with the NEW content
+        todo.id === id ? { ...todo, content: newContent } : todo
+      )
+    );
+  }
+
   // 🔭 DERIVED STATE (État dérivé)
   // We don't touch the original todoList.
   // We create a new list just for display purposes based on the filter.
@@ -236,6 +247,7 @@ function App() {
                 itemData={item}
                 deleteTodo={deleteTodo}
                 toggleTodo={toggleTodo}
+                updateTodo={updateTodo}
                 darkMode={darkMode}
               />
             ))}
