@@ -18,6 +18,9 @@ export default function ListItem({
   // We initialize it with the current content of the task
   const [editedContent, setEditedContent] = useState(itemData.content);
 
+  // Controls the visibility of the "Are you sure?" popup
+  const [showModal, setShowModal] = useState(false);
+
   // 💾 SAVE FUNCTION
   function handleSave() {
     // 1. Validation: Prevent saving empty text
@@ -35,8 +38,8 @@ export default function ListItem({
   return (
     <li
       onClick={() => {
-        if (!isEditing) { 
-          toggleTodo(itemData.id); 
+        if (!isEditing) {
+          toggleTodo(itemData.id);
         }
       }}
       className={`flex items-center justify-between  p-4 rounded-2xl border  ${
@@ -70,8 +73,8 @@ export default function ListItem({
           />
           <button
             onClick={(e) => {
-              e.stopPropagation(); 
-              handleSave();        
+              e.stopPropagation();
+              handleSave();
             }}
             className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-lg font-semibold ml-2 transition-colors"
           >
@@ -124,7 +127,7 @@ export default function ListItem({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                deleteTodo(itemData.id);
+                setShowModal(true);
               }}
               className={`  transition-colors opacity-0 group-hover:opacity-100 px-3 py-1 font-mono text-sm cursor-pointer ${
                 darkMode
@@ -137,6 +140,49 @@ export default function ListItem({
           </div>
         </>
       )}
+
+      {/* 👇 CONFIRMATION MODAL 👇 */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={(e) => {
+            e.stopPropagation(); // Stop click propagation
+            setShowModal(false); // Close modal when clicking outside (overlay)
+          }}
+        >
+          {/* White Box */}
+          <div
+            className={`${darkMode ? "bg-slate-400 border-slate-600" : "bg-white border-slate-200"} p-6 rounded-lg shadow-xl border w-80`}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the box
+          >
+            <h3 className="text-xl font-bold text-slate-800 mb-6">
+              Are you sure ?
+            </h3>
+
+            <div className="flex justify-around gap-3">
+              {/* CANCEL BUTTON */}
+              <button
+                onClick={() => setShowModal(false)} // Close modal
+                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded font-bold text-sm transition-colors"
+              >
+                NO
+              </button>
+
+              {/* CONFIRM BUTTON */}
+              <button
+                onClick={() => {
+                  deleteTodo(itemData.id); // 🔥 The actual delete action
+                  setShowModal(false); // Close modal
+                }}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded font-semibold text-sm transition-colors"
+              >
+                YES
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 👆 END OF MODAL 👆 */}
     </li>
   );
 }

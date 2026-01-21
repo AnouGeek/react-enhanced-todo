@@ -3,7 +3,6 @@ import { nanoid } from "nanoid";
 import ListItem from "./components/ListItem";
 
 function App() {
-
   // Instead of providing the list directly, we provide a function
   const [todoList, setTodoList] = useState(() => {
     // 1. Try to retrieve the saved data from the browser
@@ -29,11 +28,11 @@ function App() {
 
   const [darkMode, setDarkMode] = useState(false);
 
-  const [filter, setFilter] = useState("all")
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    const listString = JSON.stringify(todoList)
-    localStorage.setItem("react-enhanced-todo", listString)
+    const listString = JSON.stringify(todoList);
+    localStorage.setItem("react-enhanced-todo", listString);
   }, [todoList]);
 
   function deleteTodo(id) {
@@ -57,8 +56,8 @@ function App() {
 
     // 1. Check if the task already exists
     // Compare texts in lowercase so that "Apple" and "apple" are the same
-    const isDuplicate = todoList.some(item => 
-      item.content.toLowerCase() === trimmed.toLowerCase()
+    const isDuplicate = todoList.some(
+      (item) => item.content.toLowerCase() === trimmed.toLowerCase(),
     );
 
     // 2. If it is a duplicate, stop everything
@@ -78,8 +77,8 @@ function App() {
   function toggleTodo(id) {
     setTodoList((prevList) =>
       prevList.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
     );
   }
 
@@ -89,8 +88,8 @@ function App() {
     setTodoList((prevList) =>
       prevList.map((todo) =>
         // If ID matches, we create a copy with the NEW content
-        todo.id === id ? { ...todo, content: newContent } : todo
-      )
+        todo.id === id ? { ...todo, content: newContent } : todo,
+      ),
     );
   }
 
@@ -198,9 +197,10 @@ function App() {
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-1 rounded-full text-lg font-semibold transition-colors 
-              ${filter === "all" 
-                ? "bg-indigo-600 text-white" // Active style
-                : "bg-slate-200 text-slate-700 hover:bg-slate-300" // Inactive style
+              ${
+                filter === "all"
+                  ? "bg-indigo-600 text-white" // Active style
+                  : "bg-slate-200 text-slate-700 hover:bg-slate-300" // Inactive style
               }`}
           >
             All
@@ -209,9 +209,10 @@ function App() {
           <button
             onClick={() => setFilter("todo")}
             className={`px-4 py-1 rounded-full text-lg font-semibold transition-colors 
-              ${filter === "todo" 
-                ? "bg-indigo-600 text-white" 
-                : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+              ${
+                filter === "todo"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-slate-200 text-slate-700 hover:bg-slate-300"
               }`}
           >
             To do
@@ -220,9 +221,10 @@ function App() {
           <button
             onClick={() => setFilter("completed")}
             className={`px-4 py-1 rounded-full text-lg font-semibold transition-colors 
-              ${filter === "completed" 
-                ? "bg-indigo-600 text-white" 
-                : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+              ${
+                filter === "completed"
+                  ? "bg-indigo-600 text-white"
+                  : "bg-slate-200 text-slate-700 hover:bg-slate-300"
               }`}
           >
             Completed
